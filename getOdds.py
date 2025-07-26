@@ -4,7 +4,7 @@ import requests
 from dotenv import load_dotenv
 import os
 
-API_KEY = os.getenv("0137f1c0e853984f2682be05eef2b399")
+API_KEY = "0137f1c0e853984f2682be05eef2b399"
 sport = 'upcoming'
 region = 'us'  # Options: us, uk, eu, au
 market = 'h2h'  # 'h2h' for moneyline bets
