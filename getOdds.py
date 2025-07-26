@@ -38,5 +38,11 @@ if response.status_code == 200:
         print()
 else:
     print(f"Failed to fetch odds: {response.status_code} - {response.text}")
+
+
+
+
+
+    print ("nogger")
     
     
