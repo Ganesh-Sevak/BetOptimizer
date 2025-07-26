@@ -1,4 +1,5 @@
 import requests
+import pandas as pd
 # import warnings
 # warnings.filterwarnings("ignore", category=UserWarning)
 from dotenv import load_dotenv
@@ -23,6 +24,9 @@ params = {
 # Make the API request
 response = requests.get(url, params=params)
 
+rows = []
+
+
 # Check for successful response 
 if response.status_code == 200:
     odds_data = response.json()
@@ -37,6 +41,15 @@ if response.status_code == 200:
                 if market['key'] == 'h2h':
                     for outcome in market['outcomes']:
                         print(f"    {outcome['name']}: {outcome['price']}")
+                        # Add to rows list here, inside the loop
+                        rows.append({
+                            "home_team": game['home_team'],
+                            "away_team": game['away_team'],
+                            "commence_time": game['commence_time'],
+                            "bookmaker": bookmaker['title'],
+                            "team": outcome['name'],
+                            "odds": outcome['price']
+                        })
         print()
 else:
     print(f"Failed to fetch odds: {response.status_code} - {response.text}")
@@ -45,6 +58,12 @@ else:
 
 
 
-    print ("nogger ")
-    
+
+
+
+
+
+df = pd.DataFrame(rows)
+print("\nDataFrame:")
+print(df)
     
