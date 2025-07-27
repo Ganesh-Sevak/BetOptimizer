@@ -78,4 +78,4 @@ for i, row in df.iterrows():
         print()
     
     else:
-        print(row['home_team'],  row['away_team'],  row['bookmaker'], row['team'], row['odds'] ) #prints what the data is looking like, note that we did not add prints into the dataframe it self
+        print("Home Team:", row['home_team'],"   ","Away Team:",  row['away_team'],"   ","Bookmaker:",row['bookmaker'],"   ","Team:", row['team'],"   ","Odds:", row['odds'] ) #prints what the data is looking like, note that we did not add prints into the dataframe it self
