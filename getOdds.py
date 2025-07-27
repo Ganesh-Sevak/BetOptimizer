@@ -57,13 +57,25 @@ else:
 
 
 
-
-
-
-
-
-
+#this creates the data frame
 df = pd.DataFrame(rows)
 print("\nDataFrame:")
-print(df)
+#print(df)
+
+
+#this adds the space between the differnt games to make viewing alot easier
+df['next_home'] = df['home_team'].shift(-1)
+df['next_away'] = df['away_team'].shift(-1) #these 2 lines added to columns to the data frame  
+
+for i, row in df.iterrows():
+    if (row['home_team'] != row['next_home']) or (row['away_team'] != row['next_away']):#check if the teams changed, if 
+        # they did then it is is a new game
+        print()
+        print()
+        print()
+        print()
+        print()
+        print()
     
+    else:
+        print(row['home_team'],  row['away_team'],  row['bookmaker'], row['team'], row['odds'] ) #prints what the data is looking like, note that we did not add prints into the dataframe it self
