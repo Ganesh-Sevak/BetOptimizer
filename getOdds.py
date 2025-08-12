@@ -1,7 +1,5 @@
 import requests
 import pandas as pd
-# import warnings
-# warnings.filterwarnings("ignore", category=UserWarning)
 from dotenv import load_dotenv
 import os
 import impliedProb
@@ -15,7 +13,7 @@ def main():
     market = 'h2h'  # 'h2h' for moneyline bets
 
     # Construct the API URL
-    url = f'https://api.the-odds-api.com/v4/sports/{sport}/odds'
+    url = f'https://api.the-odds-api.com/v4/sports/{sport}/odds' #Dont bother stealing, its a free API key from Odds API
 
     # Set up query parameters
     params = {
@@ -26,7 +24,7 @@ def main():
     }
 
     # Make the API request
-    response = requests.get(url, params=params)
+    response = requests.get(url, params=params) #makes the API call
 
     rows = []
 
@@ -38,15 +36,14 @@ def main():
             home_team = game['home_team']
             away_team = game['away_team']
             commence_time = game['commence_time']
-            #print(f"{away_team} at {home_team} - {commence_time}")
+ 
             for bookmaker in game['bookmakers']:
-               # print(f"  Bookmaker: {bookmaker['title']}")
+
                 for market in bookmaker['markets']:
                     if market['key'] == 'h2h':
                         for outcome in market['outcomes']:
-                            #print(f"    {outcome['name']}: {outcome['price']}")
-                            # Add to rows list here, inside the loop
-                            rows.append({
+        
+                            rows.append({ # puts all the data into one big array to eventually turn into a data frame
                                 "home_team": game['home_team'],
                                 "away_team": game['away_team'],
                                 "commence_time": game['commence_time'],
@@ -54,45 +51,45 @@ def main():
                                 "team": outcome['name'],
                                 "odds": outcome['price']
                             })
-           # print()
     else:
         print(f"Failed to fetch odds: {response.status_code} - {response.text}")
 
 
 
 
-    #this creates the data frame
-    df = pd.DataFrame(rows)
-    print("\nDataFrame:")
+
+    df = pd.DataFrame(rows) #creates the data frame from the rows array
+
+    
 
 
 
-    #this adds the space between the differnt games to make viewing alot easier
+    #this adds the space between the differnt games to make viewing alot easier (This was used in development to test fuctionality)
     df['next_home'] = df['home_team'].shift(-1)
     df['next_away'] = df['away_team'].shift(-1) #these 2 lines added to columns to the data frame 
 
-    df['Prob'] = 0.01
+    df['Prob'] = 0.00 #temporarily fill the Prob column with the 0.0 to ensure its a float
 
     for i, row in df.iterrows():
-        if (row['home_team'] != row['next_home']) or (row['away_team'] != row['next_away']):#check if the teams changed, if 
-            # they did then it is is a new game
+        if (row['home_team'] != row['next_home']) or (row['away_team'] != row['next_away']):#check if the teams changed,
             
-            if row['odds']>0:
-
-                df.at[i,'Prob'] = impliedProb.PosOdds(row['odds'])
-
-            else:
-
-                df.at[i,'Prob'] = impliedProb.NegOdds(row['odds'])
             
-            print()#these prints are for debugging/ visual aid 
-            print()#these prints are for debugging/ visual aid 
-            print()#these prints are for debugging/ visual aid 
-            print()#these prints are for debugging/ visual aid 
-            print()#these prints are for debugging/ visual aid 
-            print()#these prints are for debugging/ visual aid 
+            if row['odds']>0: #checks if the odds are postive
+
+                df.at[i,'Prob'] = impliedProb.PosOdds(row['odds']) #makes a call to the function to calculate the implied probability
+
+            else: #checks if the odds are negetive
+
+                df.at[i,'Prob'] = impliedProb.NegOdds(row['odds']) #makes a call to the function to calculate the implied probability
+            
+            #print()#these prints are for debugging/ visual aid 
+            #print()#these prints are for debugging/ visual aid 
+            #print()#these prints are for debugging/ visual aid 
+            #print()#these prints are for debugging/ visual aid 
+            #print()#these prints are for debugging/ visual aid 
+            #print()#these prints are for debugging/ visual aid 
         
-        else:
+        else: #if the same teams are playing
             
             if row['odds']>0:
 
@@ -102,6 +99,5 @@ def main():
 
                 df.at[i,'Prob'] = impliedProb.NegOdds(row['odds'])
             
-            print("Home Team:", row['home_team'],"   ","Away Team:",  row['away_team'],"   ","Bookmaker:",row['bookmaker'],"   ","Team:", row['team'],"   ","Odds:", row['odds'], "   ","Implied Prob:", df.at[i,'Prob'] ) #prints what the data is looking like, note that we did not add prints into the dataframe it self
-            #these prints are for debugging/ visual aid 
+            
     return df #This data frame has  next_home       next_away      Prob
