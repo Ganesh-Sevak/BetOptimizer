@@ -19,9 +19,12 @@ ARB.py scans the table game by game and prints any pairs that satisfy the arbitr
 1. Use Python 3.
 
 2. Install required packages
-    2.1 requests
-    2.2 pandas
-    2.3 dotenv (If you purchase a paid API key from Odds.com make sure to use this, this project uses a FREE API key from Odds.com)
+
+2.1 requests
+
+2.2 pandas
+
+2.3 dotenv (If you purchase a paid API key from Odds.com make sure to use this, this project uses a FREE API key from Odds.com)
    
 
 # Warning
