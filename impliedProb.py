@@ -8,7 +8,7 @@
 
 def PosOdds(p):
     
-    return float((p)/(p + 100)) #fix this later to return the correct probability at a decimal
+    return float((100)/(p + 100)) #fix this later to return the correct probability at a decimal
 
 
 

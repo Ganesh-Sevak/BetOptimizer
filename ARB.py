@@ -1,5 +1,6 @@
 import pandas as pd
 import getOdds
+import copy
 
 df = getOdds.main() #in this file df is the data frame which also has all of the implied probabilities
 
@@ -18,25 +19,54 @@ df['next_away'] = df['away_team'].shift(-1)
 # then we can calulate the stake for each position using functions from another file 
 
 
-top = 0 # this indicates the top of the posibilites for a certian game
+
 homeProb = []
 awayProb = []
 homePos = []
 awayPos = []
-ValuableRows = []
+ValuableRows = [] # this array will contain the arbitrage oppertunites
+
 for i, row in df.iterrows(): # for every row inside the data frame
 
     if (row['home_team'] != row['next_home']) or (row['away_team'] != row['next_away']):# This is checking if the game changed
-     
-         # if the teams changed then you  check the arrays  
-        for x in range(len(homeProb)):
-            
-            for j in range(len(awayProb)):
-                
-                if (homeProb[x] + awayProb[j]) < 1: # Arbitrage opperturnity if condition is met
-                    ValuableRows.append(homePos[x])
-                    ValuableRows.append(awayPos[j])
+        
+       
+        
+        home_prob_min_idx = 0 #this will contain the idx of the min prob in Pos arrays, thus giving the best ROI when betting
+        away_prob_min_idx = 0
+        
+        temp1 = 1 #dummy vars used to calculate the minimum probs
+        temp2 = 1
+        
+        for f in range(len(homeProb)):
+            lowest = temp1
+            if homeProb[f] < lowest:
+                temp1 = homeProb[f]
+                home_prob_min_idx = f
 
+        
+        for g in range(len(awayProb)):
+            lowest = temp2
+            if awayProb[g] < lowest:
+                temp2 = awayProb[g]
+                away_prob_min_idx = g   
+
+       
+        if len(homeProb) == 0 or len(awayProb) == 0:
+            homeProb.clear(); homePos.clear()
+            awayProb.clear(); awayPos.clear()
+            continue
+        
+        if homeProb[home_prob_min_idx] + awayProb[away_prob_min_idx] < 1:
+            
+            ValuableRows.append(homePos[home_prob_min_idx])
+            ValuableRows.append(awayPos[away_prob_min_idx])
+        
+        home_prob_min_idx = 0 #this will contain the idx of the min prob in Pos arrays
+        away_prob_min_idx = 0
+        
+        
+        
         
         #clears the indicators because theyre in Valuable rows now
         homeProb.clear()
@@ -58,15 +88,6 @@ for i, row in df.iterrows(): # for every row inside the data frame
             awayPos.append(int(i))
             
 
-#this is to check if there was an arbitrage oppertunity in the last game
-for x in range(len(homeProb)):
-    
-    for j in range(len(awayProb)):
-        
-        if (homeProb[x] + awayProb[j]) < 1: # this is checking for the ineffencies
-            ValuableRows.append(homePos[x])
-            ValuableRows.append(awayPos[j])
-   
 
 
 for row_idx in range(0,len(ValuableRows), 2): # we step by two because when we print we will be printing the groups together
@@ -75,7 +96,9 @@ for row_idx in range(0,len(ValuableRows), 2): # we step by two because when we p
     
     # This will print the paired bet you would need to take for the arbitrage oppertunity
     #includes what teams are playing, which book maker you should bet with, and which team to bet on
-    print(df.iloc[pair_One])
-    print(df.iloc[pair_Two])
+    print("Home Team: ",df.iloc[pair_One]['home_team'], "  | Away Team: ", df.iloc[pair_One]['away_team'], " | Bookmaker: ", df.iloc[pair_One]['bookmaker'], " | Winner: ", df.iloc[pair_One]['team'], " | Win Probability:", df.iloc[pair_One]['Prob']  )
+    print("Home Team: ",df.iloc[pair_Two]['home_team'], "  | Away Team: ", df.iloc[pair_Two]['away_team'], " | Bookmaker: ", df.iloc[pair_Two]['bookmaker'], " | Winner: ", df.iloc[pair_Two]['team'], " | Win Probability:", df.iloc[pair_Two]['Prob']  )
     print("\n")
+    
+    
     
